@@ -3,10 +3,10 @@
 #include <vector>
 using namespace std;
 
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX_CLASS_H
+#define MATRIX_CLASS_H
 
-class MATRIX
+class Matrix
 {
 	vector<vector<double>> mat;
 	int n;
@@ -15,23 +15,23 @@ class MATRIX
 
 public:
 	// constructors
-	MATRIX();
-	MATRIX(vector<vector<double>> mat2);
-	MATRIX(int a, int b = -1);
+	Matrix();
+	Matrix(vector<vector<double>> mat2);
+	Matrix(int a, int b = -1);
 
 	// utility 
 	void print();
-	MATRIX generateUnit(int k);
+	Matrix generateUnit(int k);
 
 	// properties
 	int trace();
-	MATRIX transpose();
+	Matrix transpose();
 	double determinant(vector<vector<double>> a = {});
-	MATRIX cofactorMat();
-	MATRIX adjoint();
-	MATRIX inverse();
+	Matrix cofactorMat();
+	Matrix adjoint();
+	Matrix inverse();
 	int rank();
-	MATRIX rref();
+	Matrix rref();
 
 	// other properties
 	pair<int, int> order();
@@ -40,20 +40,20 @@ public:
 	bool isNull();
 	bool isSquare();
 	string symmetry();
-	string commutativity(MATRIX mat2);
+	string commutativity(Matrix mat2);
 	string poweredMatTypes();
 	bool isElem();
 
 	// operations
-	MATRIX operator+(MATRIX mat2);
-	MATRIX operator-(MATRIX mat2);
-	MATRIX operator*(MATRIX mat2);
-	MATRIX operator*(double k);
-	MATRIX operator%(MATRIX mat2);
-	MATRIX operator/(MATRIX mat2);
-	MATRIX operator^(int k);
-	MATRIX operator=(MATRIX mat2);
-	bool operator==(MATRIX mat2);
+	Matrix operator+(Matrix mat2);
+	Matrix operator-(Matrix mat2);
+	Matrix operator*(Matrix mat2);
+	Matrix operator*(double k);
+	Matrix operator%(Matrix mat2);
+	Matrix operator/(Matrix mat2);
+	Matrix operator^(int k);
+	Matrix operator=(Matrix mat2);
+	bool operator==(Matrix mat2);
 	double operator[](pair<int, int> p);
 
 
@@ -70,8 +70,8 @@ public:
 	void colDel(int c);
 	void insertRow(double r[], int pos);
 	void insertCol(double c[], int pos);
-	MATRIX joinRows(MATRIX mat2);
-	MATRIX joinCols(MATRIX mat2);
+	Matrix joinRows(Matrix mat2);
+	Matrix joinCols(Matrix mat2);
 };
 
-#endif // MATRIX_X
+#endif // Matrix_X

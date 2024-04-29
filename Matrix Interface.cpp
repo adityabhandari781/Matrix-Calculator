@@ -3,25 +3,25 @@
 #include "Matrix Class.h"
 using namespace std;
 
-void appendMatrix(vector<MATRIX>& v)
+void appendMatrix(vector<Matrix>& v)
 {
-	MATRIX m;
+	Matrix m;
 	v.push_back(m);
 	cout << "Matrix " << char(64 + v.size()) << " successfully added\n";
 }
 
-void displayMats(vector<MATRIX> v)
+void displayMats(vector<Matrix> v)
 {
 	cout << "\nList of matrices: \n";
 	char ch = 'A';
-	for (MATRIX i : v) {
+	for (Matrix i : v) {
 		cout << '\n' << ch << ":\n";
 		i.print();
 		ch++;
 	}
 }
 
-void matrixPrint(MATRIX mat)
+void matrixPrint(Matrix mat)
 {
 	if (mat.matShape() == "cell" && mat[{0, 0}] == INT_MIN)
 		cout << "Invalid operation";
@@ -30,7 +30,7 @@ void matrixPrint(MATRIX mat)
 		mat.print();
 }
 
-void updateMat(vector<MATRIX>& v, int index, MATRIX mat)
+void updateMat(vector<Matrix>& v, int index, Matrix mat)
 {
 	if (mat.matShape() == "cell" && mat[{0, 0}] == INT_MIN) {
 		cout << "Invalid operation!\n";
@@ -59,10 +59,10 @@ void updateMat(vector<MATRIX>& v, int index, MATRIX mat)
 
 int main()
 {
-	vector<MATRIX> v;
+	vector<Matrix> v;
 	int index;
 
-	cout << "================ MATRIX PROCESSING APP ================";
+	cout << "================ Matrix PROCESSING APP ================";
 
 	while (1) {
 
@@ -95,7 +95,7 @@ int main()
 				cout << "\nPlease enter an appropriate value!\n";
 
 			else {
-				MATRIX mat = v[index];
+				Matrix mat = v[index];
 				cout << "\nSelected matrix:\n";
 				mat.print();
 				cout << "\nWould you like to:\n"
@@ -112,7 +112,7 @@ int main()
 				case ('1'):
 					cout << "\nWhich arithmetic property:\n"
 						<< "1. Rank\n"
-						<< "2. Rref\n\n";
+						<< "2. Rref\n";
 					if (mat.isSquare())
 						cout << "3. Trace\n"
 						<< "4. Determinant\n"
@@ -235,7 +235,7 @@ int main()
 						cin >> choice;
 						cout << "Enter your matrix:\n";
 						{
-							MATRIX mat2;
+							Matrix mat2;
 							switch (choice) {
 
 							case ('1'):
@@ -438,7 +438,7 @@ int main()
 					cout << "\nPlease enter appropriate values\n";
 					break;
 				}
-				MATRIX mat1 = v[index1], mat2 = v[index2], ans({});
+				Matrix mat1 = v[index1], mat2 = v[index2], ans({});
 				cout << "Would you like to:\n"
 					<< "1. Check commutativity of matrices\n"
 					<< "2. Perform operations\n"
