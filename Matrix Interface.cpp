@@ -62,7 +62,7 @@ int main()
 	vector<Matrix> v;
 	int index;
 
-	cout << "================ Matrix PROCESSING APP ================";
+	cout << "================ MATRIX PROCESSING APP ================";
 
 	while (1) {
 
