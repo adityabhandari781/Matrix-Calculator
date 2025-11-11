@@ -14,9 +14,8 @@ class Matrix
 
 public:
 	// constructors
-	Matrix();
-	Matrix(vector<vector<double>> mat2);
-	Matrix(int a, int b = -1);
+	Matrix(int a = -1, int b = -1);
+	Matrix(vector<vector<double>> mat1);
 
 	// utility 
 	void print();
@@ -72,45 +71,38 @@ public:
 	Matrix joinCols(Matrix mat2);
 };
 
-Matrix::Matrix()
+Matrix::Matrix(int n, int m) : n(n), m(m)
 {
-	// input from user in the console
-
-	cout << "\nEnter the number of rows and columns: ";
-	cin >> n >> m;
-	mat.resize(n, vector<double>(m));
-
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < m; j++) {
-			cout << "Enter element (" << i << ',' << j << ") : ";
-			cin >> mat[i][j];
+	if (n == -1) {
+		cout << "\nEnter the number of rows and columns: ";
+		while (n < 0 || m < 0) {
+			cin >> n >> m;
+			if (n < 0 || m < 0)
+				cout << "Invalid values, try again.\n";
 		}
+		mat.resize(n, vector<double>(m));
+	
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < m; j++) {
+				cout << "Enter element (" << i << ',' << j << ") : ";
+				cin >> mat[i][j];
+			}
+	}
+	else {
+		if (m == -1)
+			m = n;
+		mat.resize(n, vector<double>(m));
+	}
 }
 
-Matrix::Matrix(vector<vector<double>> mat2)
+Matrix::Matrix(vector<vector<double>> mat) : mat(mat), m(0), n(mat.size())
 {
-	// matrix elements are taken from parameter
-	mat = mat2;
-	m = 0, n = mat.size();
+	for (vector<double> v : mat)
+		m = max(m, (int)v.size());
 
-	for (vector<double> i : mat)
-		m = max(m, (int)i.size());
-
-	for (vector<double>& i : mat)
-		while (i.size() < m)
-			i.push_back(0);
-}
-
-Matrix::Matrix(int a, int b)
-{
-	// a and b are row and column, respectively
-	if (b == -1)
-		b = a;
-	// in case only a is provided, b automatically is initialized to a, producing a square matrix
-
-	n = a;
-	m = b;
-	mat.resize(n, vector<double>(m));
+	for (vector<double>& v : mat)
+		while (v.size() < m)
+			v.push_back(0);
 }
 
 
@@ -130,7 +122,7 @@ void Matrix::print()
 
 Matrix Matrix::generateUnit(int k)
 {
-	Matrix ans(k, k);
+	Matrix ans(k);
 	for (int i = 0; i < k; i++)
 		ans.mat[i][i] = 1;
 	return ans;
@@ -155,8 +147,7 @@ string Matrix::matShape()
 		return "column";
 	if (n > m)
 		return "vertical";
-	else
-		return "horizontal";
+	return "horizontal";
 }
 
 bool Matrix::isSquare()
@@ -171,19 +162,19 @@ string Matrix::sqMatType()
 
 	bool a = 1, b = 1;
 	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++) {
-			if (mat[i][j] != 0 && i > j)
-				a = 0;
-			if (mat[i][j] != 0 && i < j)
-				b = 0;
-		}
+		for (int j = 0; j < n; j++)
+			if (mat[i][j] && )
+				if (i > j)
+					a = 0;
+				else if (i < j)
+					b = 0;
 
-	bool hasSameElts = 1;
 	if (a && b) {
-		for (int i = 1; i < n; i++)
+		int i;
+		for (i = 1; i < n; i++)
 			if (mat[i][i] != mat[i - 1][i - 1])
-				hasSameElts = 0;
-		if (hasSameElts)
+				break;
+		if (i == n)
 			return (mat[0][0] == 1) ? "unit" : "scalar";
 		return "diagonal";
 	}
@@ -218,16 +209,14 @@ string Matrix::symmetry()
 string Matrix::commutativity(Matrix mat2)
 {
 	Matrix
-		mat1(*this),
-		prod1(mat1 * mat2),
-		prod2(mat2 * mat1),
-		negProd1(mat1 * mat2 * -1);
+		prod1(mat * mat2),
+		prod2(mat2 * mat);
 
 	if (prod1 == invalid || prod2 == invalid)
 		return "invalid";
 	if (prod1 == prod2)
 		return "commutative";
-	else if (prod1 == negProd1)
+	else if (prod1 == -prod1)
 		return "anti-commutative";
 	return "no commutativity";
 }
@@ -235,25 +224,24 @@ string Matrix::commutativity(Matrix mat2)
 string Matrix::poweredMatTypes()
 {
 	Matrix
-		mat1(*this),
 		mat2(mat1 ^ 2),
 		unit(generateUnit(mat.size()));
 
 	if (!isSquare())
 		return "invalid";
-	if (mat2 == mat1)
+	if (mat2 == mat)
 		return "idempotent";
 	if (mat2 == unit)
 		return "involutary";
-	if (mat2 * mat1 == unit)
+	if (mat2 * mat == unit)
 		return "orthogonal";
 
 	for (int i = 3; i < 10; i++) {
-		mat2 = mat2 * mat1;
+		mat2 = mat2 * mat;
 		if (mat2 == unit)
 			return "periodic";
-		if (mat2 == *new Matrix(mat2.n, mat2.m));
-		return "nilpotent";
+		if (mat2 == *new Matrix(n, m))
+			return "nilpotent";
 	}
 	return "none";
 }
@@ -283,11 +271,10 @@ Matrix Matrix::operator+(Matrix mat2)
 	if (n != mat2.n || m != mat2.m)
 		return invalid;
 
-	Matrix ans(n, m);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
-			ans.mat[i][j] = mat[i][j] + mat2.mat[i][j];
-	return ans;
+			mat2.mat[i][j] += mat[i][j];
+	return mat2;
 }
 
 Matrix Matrix::operator-(Matrix mat2)
@@ -295,11 +282,10 @@ Matrix Matrix::operator-(Matrix mat2)
 	if (n != mat2.n || m != mat2.m)
 		return invalid;
 
-	Matrix ans(n, m);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
-			ans.mat[i][j] = mat[i][j] - mat2.mat[i][j];
-	return ans;
+			mat2.mat[i][j] += mat[i][j];
+	return mat2;
 }
 
 Matrix Matrix::operator*(Matrix mat2)
@@ -308,9 +294,9 @@ Matrix Matrix::operator*(Matrix mat2)
 		return invalid;
 
 	Matrix ans(n, mat2.m);
-	for (size_t i = 0; i < ans.n; i++)
-		for (size_t j = 0; j < ans.m; j++)
-			for (size_t k = 0; k < m; k++)
+	for (int i = 0; i < ans.n; i++)
+		for (int j = 0; j < ans.m; j++)
+			for (int k = 0; k < m; k++)
 				ans.mat[i][j] += mat[i][k] * mat2.mat[k][j];
 	return ans;
 }
@@ -329,6 +315,7 @@ Matrix Matrix::operator%(Matrix mat2)
 	// element-wise multiplication
 	if (n != mat2.n || m != mat2.m)
 		return invalid;
+
 	Matrix ans(n, m);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
@@ -341,6 +328,7 @@ Matrix Matrix::operator/(Matrix mat2)
 	// element-wise division
 	if (n != mat2.n || m != mat2.m)
 		return invalid;
+
 	Matrix ans(n, m);
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
@@ -351,19 +339,25 @@ Matrix Matrix::operator/(Matrix mat2)
 Matrix Matrix::operator^(int k)
 {
 	// matrix power
-	if (!isSquare())
-		return invalid;
-	for (int i = 1; i < k; i++)
-		*this = *this * *this;
-	return *this;
+    if (!isSquare() || k < 0)
+        return invalid;
+
+    Matrix ans = generateUnit(n);  // identity matrix of same size
+    Matrix base = *this;
+
+    while (k > 0) {
+        if (k & 1)
+            ans = ans * base;
+        base *= base;
+        k >>= 1;
+    }
+
+    return ans;
 }
 
-Matrix Matrix::operator=(Matrix mat2)
+Matrix Matrix::operator=(Matrix mat2) : mat = mat2.mat, n = mat2.n, m = mat2.m
 {
 	// assignment operator
-	mat = mat2.mat;
-	n = mat2.n;
-	m = mat2.m;
 	return *this;
 }
 
@@ -416,15 +410,15 @@ double Matrix::determinant(vector<vector<double>> a)
 
 	if (n == 1)
 		return mat[0][0];
-	double det = 0;
+	double ans = 0;
 
 	for (int i = 0; i < n; i++) {
 		Matrix subMat(mat);
 		subMat.rowDel(0);
 		subMat.colDel(i);
-		det += ((i % 2 == 0) ? 1 : -1) * a[0][i] * subMat.determinant();
+		ans += ((i & 1) ? -1 : 1) * a[0][i] * subMat.determinant();
 	}
-	return det;
+	return ans;
 }
 
 Matrix Matrix::cofactorMat()
